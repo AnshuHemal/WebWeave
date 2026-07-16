@@ -18,3 +18,25 @@ export const workflows = pgTable("workflows", {
 })
 
 export type Workflow = typeof workflows.$inferSelect
+
+// ---------------------------------------------------------------------------
+// Credentials — securely stored secrets referenced by workflow nodes.
+// The `encryptedData` field holds the AES-256-GCM encrypted JSON blob of the
+// actual secret values. Only the server can decrypt it using CREDENTIALS_SECRET.
+// ---------------------------------------------------------------------------
+
+export type CredentialType = "bearer" | "api-key" | "basic" | "custom"
+
+export const credentials = pgTable("credentials", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orgId: text("org_id").notNull(),
+  name: text("name").notNull(),
+  type: text("type").$type<CredentialType>().notNull(),
+  // AES-256-GCM encrypted JSON — format: iv:authTag:ciphertext (hex-encoded)
+  encryptedData: text("encrypted_data").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+})
+
+export type Credential = typeof credentials.$inferSelect
+

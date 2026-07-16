@@ -31,11 +31,10 @@ export function NodeComments({ nodeId }: NodeCommentsProps) {
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <button
-          onClick={(e) => {
-            e.stopPropagation()
-            setIsOpen(true)
-          }}
-          className="absolute -top-3.5 -right-2 flex size-6 items-center justify-center rounded-full border border-violet-200 bg-violet-600 text-[10px] font-bold text-white shadow-sm hover:scale-105 hover:bg-violet-700 transition-all cursor-pointer"
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          className="absolute -top-3.5 -right-2 flex size-6 items-center justify-center rounded-full border border-cyan-200 bg-cyan-600 text-[10px] font-bold text-white shadow-sm hover:scale-105 hover:bg-cyan-700 transition-all cursor-pointer"
+          title="Node Comments"
         >
           {commentCount > 0 ? (
             <span className="flex items-center gap-0.5">

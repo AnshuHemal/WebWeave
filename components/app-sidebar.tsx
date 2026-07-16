@@ -1,12 +1,18 @@
 import * as React from "react"
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs"
 import { auth } from "@clerk/nextjs/server"
+import Link from "next/link"
+import { Key, LayoutDashboard } from "lucide-react"
 
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarSeparator,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { createWorkflowAction } from "@/features/workflows/actions"
@@ -37,6 +43,26 @@ export async function AppSidebar({
         <SidebarTrigger />
       </SidebarHeader>
       <SidebarContent>
+        {/* Dashboard quick link */}
+        <SidebarMenu className="px-2 py-1">
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Dashboard">
+              <Link href="/">
+                <LayoutDashboard className="size-4" />
+                <span>Dashboard</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Credentials">
+              <Link href="/credentials">
+                <Key className="size-4" />
+                <span>Credentials</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+        <SidebarSeparator />
         <WorkflowNav
           workflows={workflows}
           onCreateWorkflow={createWorkflowAction}
@@ -57,3 +83,4 @@ export async function AppSidebar({
     </Sidebar>
   )
 }
+

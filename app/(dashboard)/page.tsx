@@ -43,7 +43,7 @@ export default async function Page() {
       <Empty className="min-h-svh border-none">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <WorkflowIcon className="text-violet-600 size-10" />
+            <WorkflowIcon className="text-cyan-500 size-10" />
           </EmptyMedia>
           <EmptyTitle>Get started with WebWeave</EmptyTitle>
           <EmptyDescription>

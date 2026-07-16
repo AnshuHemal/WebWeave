@@ -225,7 +225,7 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
                     values: { ...values, continueOnFail: e.target.checked ? "true" : "false" },
                   })
                 }}
-                className="size-4 accent-violet-600 rounded"
+                className="size-4 accent-cyan-600 rounded"
               />
             </div>
 
