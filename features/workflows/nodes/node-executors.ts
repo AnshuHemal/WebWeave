@@ -14,6 +14,8 @@ import { sendEmail } from "./send-email"
 import { ifElse } from "./if-else"
 import { waitNode } from "./wait"
 import { webhook } from "./webhook"
+import { slackNotify } from "./slack-notify"
+import { sheetsAppend } from "./sheets-append"
 
 export type NodeContext = {
   values: Record<string, string>
@@ -45,5 +47,13 @@ export const nodeExecutors: Partial<Record<NodeType, NodeExecutor>> = {
       method: values.method,
       headers: values.headers,
       body: values.body,
+    }),
+  "slack-notify": async ({ values }) =>
+    slackNotify({ webhookUrl: values.webhookUrl, text: values.text }),
+  "sheets-append": async ({ values }) =>
+    sheetsAppend({
+      spreadsheetId: values.spreadsheetId,
+      range: values.range,
+      values: values.values,
     }),
 } satisfies Record<ActionNodeType, NodeExecutor>

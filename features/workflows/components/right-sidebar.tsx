@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react"
 import { useReactFlow, useStore } from "@xyflow/react"
-import { Lock, MoreHorizontal, Play, Square, Trash2 } from "lucide-react"
+import { Lock, MoreHorizontal, Play, ScanSearch, Square, Trash2 } from "lucide-react"
+import { ExecutionInspector } from "@/features/workflows/components/execution-inspector"
 import { toast } from "sonner"
 
 import {
@@ -189,6 +190,47 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
                   <span className="truncate">{connection.label}</span>
                 </button>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Retry & Error Policies */}
+        {node.data.kind === "action" && (
+          <div className="mt-4 pt-4 border-t border-border space-y-4">
+            <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Retry & Error Policies
+            </h4>
+            
+            <div className="flex items-center justify-between">
+              <Label htmlFor="continueOnFail" className="text-xs">Continue on Fail</Label>
+              <input
+                type="checkbox"
+                id="continueOnFail"
+                checked={values.continueOnFail === "true"}
+                onChange={(e) => {
+                  updateNodeData(node.id, {
+                    values: { ...values, continueOnFail: e.target.checked ? "true" : "false" },
+                  })
+                }}
+                className="size-4 accent-violet-600 rounded"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="maxRetries" className="text-xs">Max Retries</Label>
+              <Input
+                id="maxRetries"
+                type="number"
+                min="0"
+                max="5"
+                placeholder="0"
+                value={values.maxRetries ?? "0"}
+                onChange={(e) => {
+                  updateNodeData(node.id, {
+                    values: { ...values, maxRetries: e.target.value },
+                  })
+                }}
+              />
             </div>
           </div>
         )}
@@ -453,12 +495,22 @@ export function RightSidebar({ workflowId }: { workflowId: string }) {
           >
             Editor
           </TabsTrigger>
+          <TabsTrigger
+            value="inspector"
+            className="flex-none rounded-sm data-active:bg-accent! data-active:text-accent-foreground! data-active:shadow-none! dark:data-active:border-transparent!"
+          >
+            <ScanSearch className="mr-1 size-3" />
+            Inspector
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="toolbar" className="flex min-h-0 flex-col">
           <Palette />
         </TabsContent>
         <TabsContent value="editor" className="flex min-h-0 flex-col">
           <Inspector key={selected?.id} node={selected} />
+        </TabsContent>
+        <TabsContent value="inspector" className="flex min-h-0 flex-col">
+          <ExecutionInspector />
         </TabsContent>
       </Tabs>
     </ResizablePanel>

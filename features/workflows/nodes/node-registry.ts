@@ -6,9 +6,11 @@ import {
   GitFork,
   Globe,
   Mail,
+  MessageSquare,
   MousePointerClick,
   Pointer,
   ScanText,
+  Table,
   Webhook,
   type LucideIcon,
 } from "lucide-react"
@@ -50,6 +52,44 @@ export const nodeRegistry = {
     accent: "bg-blue-500 text-white",
     fields: [],
     outputs: [],
+  },
+  "webhook-trigger": {
+    type: "webhook-trigger",
+    kind: "trigger",
+    label: "Webhook Trigger",
+    icon: Webhook,
+    accent: "bg-purple-600 text-white",
+    fields: [
+      {
+        key: "path",
+        label: "Webhook Path Slug",
+        placeholder: "my-custom-webhook",
+        required: true,
+      },
+    ],
+    outputs: [
+      { path: "body", label: "Request Body" },
+      { path: "headers", label: "Request Headers" },
+      { path: "query", label: "Query Parameters" },
+    ],
+  },
+  "cron-trigger": {
+    type: "cron-trigger",
+    kind: "trigger",
+    label: "Cron Trigger",
+    icon: Clock,
+    accent: "bg-blue-600 text-white",
+    fields: [
+      {
+        key: "expression",
+        label: "Cron Expression",
+        placeholder: "0 9 * * * (Every day at 9am)",
+        required: true,
+      },
+    ],
+    outputs: [
+      { path: "timestamp", label: "Trigger Timestamp" },
+    ],
   },
   "open-url": {
     type: "open-url",
@@ -237,6 +277,62 @@ export const nodeRegistry = {
     outputs: [
       { path: "status", label: "Status Code" },
       { path: "response", label: "Response" },
+    ],
+  },
+  "slack-notify": {
+    type: "slack-notify",
+    kind: "action",
+    label: "Slack Notify",
+    icon: MessageSquare,
+    accent: "bg-rose-600 text-white",
+    fields: [
+      {
+        key: "webhookUrl",
+        label: "Slack Webhook URL",
+        placeholder: "https://hooks.slack.com/services/...",
+        required: true,
+      },
+      {
+        key: "text",
+        label: "Message Text",
+        placeholder: "Hello from WebWeave: {{ node_id.extraction }}",
+        multiline: true,
+        required: true,
+      },
+    ],
+    outputs: [
+      { path: "sent", label: "Message Sent" },
+    ],
+  },
+  "sheets-append": {
+    type: "sheets-append",
+    kind: "action",
+    label: "Sheets Append",
+    icon: Table,
+    accent: "bg-emerald-600 text-white",
+    fields: [
+      {
+        key: "spreadsheetId",
+        label: "Spreadsheet ID",
+        placeholder: "1xyz...",
+        required: true,
+      },
+      {
+        key: "range",
+        label: "Range / Sheet Name",
+        placeholder: "Sheet1",
+        required: true,
+      },
+      {
+        key: "values",
+        label: "Values (JSON Array)",
+        placeholder: '["{{ node_id.title }}", "{{ node_id.url }}"]',
+        multiline: true,
+        required: true,
+      },
+    ],
+    outputs: [
+      { path: "updatedRange", label: "Updated Range" },
     ],
   },
 } satisfies Record<string, NodeDefinition>

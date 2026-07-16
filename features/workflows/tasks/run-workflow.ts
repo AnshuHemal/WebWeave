@@ -34,7 +34,20 @@ export type RunStep = {
 // sessions) gets layered on from here.
 export const runWorkflowTask = task({
   id: "run-workflow",
-  run: async ({ workflowId, orgId }: { workflowId: string; orgId: string }) => {
+  run: async ({
+    workflowId,
+    orgId,
+    triggerPayload,
+  }: {
+    workflowId: string
+    orgId: string
+    triggerPayload?: {
+      body?: any
+      headers?: any
+      query?: any
+      timestamp?: string
+    }
+  }) => {
     const workflow = await getWorkflow(orgId, workflowId)
     if (!workflow?.graph) throw new Error(`Workflow ${workflowId} has no graph`)
 
@@ -127,6 +140,22 @@ export const runWorkflowTask = task({
       // output — mark it done rather than leaving it "pending".
       const executor = nodeExecutors[node.data.type]
       if (!executor) {
+        if (node.data.kind === "trigger") {
+          if (node.data.type === "webhook-trigger") {
+            outputs[currentId] = {
+              body: triggerPayload?.body || {},
+              headers: triggerPayload?.headers || {},
+              query: triggerPayload?.query || {},
+            }
+          } else if (node.data.type === "cron-trigger") {
+            outputs[currentId] = {
+              timestamp: triggerPayload?.timestamp || new Date().toISOString(),
+            }
+          } else {
+            outputs[currentId] = {}
+          }
+          step.output = outputs[currentId]
+        }
         step.status = "done"
         publishSteps()
         
@@ -154,21 +183,55 @@ export const runWorkflowTask = task({
       // Time the executor so the console can show how long the step took, on
       // both the success and failure paths.
       const startedAt = Date.now()
-      try {
-        const output = await executor({ values, getStagehand })
-        outputs[currentId] = output
-        step.output = output
-      } catch (error) {
-        // Flush the "failed" state before the throw unwinds the run: a thrown run
-        // returns no output, so this flushed metadata is the only way the canvas
-        // ever learns which node failed — and the only place its error survives.
+      const maxRetries = Math.min(Number(values.maxRetries ?? 0), 5)
+      const continueOnFail = values.continueOnFail === "true"
+      let lastError: Error | null = null
+
+      for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        try {
+          if (attempt > 0) {
+            logger.log(`Retrying step "${node.data.title}" (attempt ${attempt}/${maxRetries})`)
+            await new Promise((res) => setTimeout(res, 1000 * attempt)) // exponential backoff
+          }
+          const output = await executor({ values, getStagehand })
+          outputs[currentId] = output
+          step.output = output
+          lastError = null
+          break
+        } catch (error) {
+          lastError = error instanceof Error ? error : new Error(String(error))
+          if (attempt < maxRetries) {
+            step.error = `Attempt ${attempt + 1} failed: ${lastError.message}. Retrying...`
+            publishSteps()
+          }
+        }
+      }
+
+      if (lastError) {
+        if (continueOnFail) {
+          // Skip this node gracefully; pass an error output so downstream nodes
+          // can reference it, and mark it failed-but-skipped.
+          outputs[currentId] = { error: lastError.message, skipped: true }
+          step.output = outputs[currentId]
+          step.status = "failed"
+          step.durationMs = Date.now() - startedAt
+          step.error = `[Skipped after ${maxRetries + 1} attempt(s)]: ${lastError.message}`
+          publishSteps()
+          await metadata.flush()
+          // Continue to next node instead of throwing
+          const nextEdges = edges.filter((e) => e.source === currentId)
+          currentId = nextEdges[0]?.target
+          continue
+        }
+
+        // Flush the "failed" state before the throw unwinds the run.
         step.status = "failed"
         step.durationMs = Date.now() - startedAt
-        step.error = error instanceof Error ? error.message : String(error)
+        step.error = lastError.message
         publishSteps()
         await metadata.flush()
         await stagehand?.close()
-        throw error
+        throw lastError
       }
 
       step.status = "done"
