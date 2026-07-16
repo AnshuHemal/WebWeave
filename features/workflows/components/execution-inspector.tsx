@@ -20,7 +20,7 @@ function StatusIcon({ status }: { status: RunStep["status"] }) {
   if (status === "failed")
     return <XCircle className="size-3.5 shrink-0 text-rose-500" />
   if (status === "running")
-    return <Loader2 className="size-3.5 shrink-0 animate-spin text-cyan-400" />
+    return <Loader2 className="size-3.5 shrink-0 animate-spin text-blue-400" />
   return <Clock className="size-3.5 shrink-0 text-muted-foreground" />
 }
 
@@ -28,7 +28,7 @@ function StatusBadge({ status }: { status: RunStep["status"] }) {
   const map = {
     done: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
     failed: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-    running: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+    running: "bg-blue-500/10 text-blue-400 border-blue-500/20",
     pending: "bg-muted/40 text-muted-foreground border-border",
   } as const
   return (
@@ -176,7 +176,7 @@ export function ExecutionInspector() {
         className={cn(
           "flex items-center gap-2 border-b border-border px-3 py-2 text-xs font-medium",
           isLive
-            ? "bg-cyan-500/10 text-cyan-300"
+            ? "bg-blue-500/10 text-blue-300"
             : "bg-muted/30 text-muted-foreground"
         )}
       >

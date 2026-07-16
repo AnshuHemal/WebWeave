@@ -62,7 +62,7 @@ export const nodeRegistry = {
     kind: "trigger",
     label: "Webhook Trigger",
     icon: Webhook,
-    accent: "bg-cyan-600 text-white",
+    accent: "bg-blue-600 text-white",
     fields: [
       {
         key: "path",
@@ -114,7 +114,7 @@ export const nodeRegistry = {
     kind: "action",
     label: "Act",
     icon: Pointer,
-    accent: "bg-teal-600 text-white",
+    accent: "bg-blue-500 text-white",
     fields: [
       {
         key: "instruction",

@@ -145,7 +145,7 @@ export function DashboardMetrics({ runs, workflowCount }: DashboardMetricsProps)
         )
       case "EXECUTING":
         return (
-          <Badge variant="outline" className="bg-cyan-500/10 text-cyan-400 border-cyan-500/20 gap-1 animate-pulse font-medium">
+          <Badge variant="outline" className="bg-blue-500/10 text-blue-500 border-blue-500/20 gap-1 animate-pulse font-medium">
             <Activity className="size-3" /> Running
           </Badge>
         )
@@ -177,7 +177,7 @@ export function DashboardMetrics({ runs, workflowCount }: DashboardMetricsProps)
     <div className="flex-1 space-y-8 p-8 pt-6 overflow-y-auto max-h-screen">
       <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Dashboard
           </h2>
           <p className="text-muted-foreground">
@@ -203,12 +203,12 @@ export function DashboardMetrics({ runs, workflowCount }: DashboardMetricsProps)
         </Card>
 
         <Card className="relative overflow-hidden transition-all hover:shadow-md border bg-card/60 backdrop-blur-sm group">
-          <div className="absolute top-0 left-0 h-full w-[4px] bg-cyan-500" />
+          <div className="absolute top-0 left-0 h-full w-[4px] bg-blue-500" />
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Executions
             </CardTitle>
-            <Play className="size-4 text-cyan-500 transition-transform group-hover:scale-110" />
+            <Play className="size-4 text-blue-500 transition-transform group-hover:scale-110" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.total}</div>

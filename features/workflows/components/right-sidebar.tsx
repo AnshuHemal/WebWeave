@@ -5,6 +5,7 @@ import { useReactFlow, useStore } from "@xyflow/react"
 import { Lock, MoreHorizontal, Play, ScanSearch, Square, Trash2 } from "lucide-react"
 import { ExecutionInspector } from "@/features/workflows/components/execution-inspector"
 import { MonacoField } from "@/features/workflows/components/monaco-field"
+import { ExpressionBuilder } from "@/features/workflows/components/expression-builder"
 import { toast } from "sonner"
 
 import {
@@ -189,17 +190,25 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
         {/* Available upstream outputs — click to drop a token into the last
             focused field (or the first field if none has been touched). */}
         {connections.length > 0 && (
-          <div className="flex flex-col gap-1.5">
-            <Label className="text-xs">Connections</Label>
-            <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-col gap-1.5 mt-2 pt-3 border-t border-border">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Upstream Variables
+              </Label>
+              <ExpressionBuilder
+                onInsertToken={insertToken}
+                activeFieldName={targetKey}
+              />
+            </div>
+            <div className="flex flex-wrap gap-1.5 pt-1">
               {connections.map((connection) => (
                 <button
                   key={connection.token}
                   type="button"
                   onClick={() => insertToken(connection.token)}
-                  className="flex max-w-full items-center gap-1.5 rounded-md border border-border bg-card px-1.5 py-1 text-xs hover:bg-accent"
+                  className="flex max-w-full items-center gap-1.5 rounded-md border border-blue-500/20 bg-blue-500/5 px-2 py-1 text-xs text-blue-300 hover:bg-blue-500/15 transition-colors"
                 >
-                  <NodeIcon type={connection.nodeType} className="size-4" />
+                  <NodeIcon type={connection.nodeType} className="size-3.5" />
                   <span className="truncate">{connection.label}</span>
                 </button>
               ))}
@@ -225,7 +234,7 @@ function Inspector({ node }: { node: StepNodeType | undefined }) {
                     values: { ...values, continueOnFail: e.target.checked ? "true" : "false" },
                   })
                 }}
-                className="size-4 accent-cyan-600 rounded"
+                className="size-4 accent-blue-600 rounded"
               />
             </div>
 

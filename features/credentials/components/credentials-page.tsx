@@ -60,14 +60,14 @@ const CREDENTIAL_TYPES: {
     label: "Bearer Token",
     description: "Authorization: Bearer <token>",
     icon: <ShieldCheck className="size-4" />,
-    accent: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
+    accent: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   },
   {
     value: "api-key",
     label: "API Key",
     description: "Custom header or query param",
     icon: <Key className="size-4" />,
-    accent: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+    accent: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
   },
   {
     value: "basic",
@@ -81,7 +81,7 @@ const CREDENTIAL_TYPES: {
     label: "Custom",
     description: "Key/value pairs of your choice",
     icon: <Code2 className="size-4" />,
-    accent: "bg-teal-500/10 text-teal-400 border-teal-500/20",
+    accent: "bg-purple-500/10 text-purple-400 border-purple-500/20",
   },
 ]
 
@@ -180,7 +180,7 @@ function NewCredentialDialog({
       <DialogContent className="max-w-lg bg-card border-border">
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400">
+            <div className="flex size-9 items-center justify-center rounded-lg bg-blue-500/10 text-blue-400">
               <Lock className="size-5" />
             </div>
             <div>
@@ -357,7 +357,7 @@ function NewCredentialDialog({
                 <button
                   type="button"
                   onClick={() => setCustomFields([...customFields, { key: "", value: "" }])}
-                  className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300"
+                  className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300"
                 >
                   <Plus className="size-3" />
                   Add field
@@ -383,7 +383,7 @@ function NewCredentialDialog({
               type="submit"
               size="sm"
               disabled={isPending}
-              className="bg-cyan-600 hover:bg-cyan-500 text-white font-medium shadow-md shadow-cyan-500/20"
+              className="bg-blue-600 hover:bg-blue-500 text-white font-medium shadow-md shadow-blue-500/20"
             >
               {isPending ? "Saving…" : "Save Credential"}
             </Button>
@@ -432,7 +432,7 @@ function CredentialCard({
     <div
       className={cn(
         "group relative flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-200",
-        "hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5 hover:-translate-y-0.5"
+        "hover:border-blue-500/30 hover:shadow-lg hover:shadow-blue-500/5 hover:-translate-y-0.5"
       )}
     >
       {/* Type icon chip */}
@@ -522,7 +522,7 @@ export function CredentialsPage({
       {/* Header */}
       <div className="flex items-center justify-between space-y-2">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             Credentials
           </h2>
           <p className="text-muted-foreground">
@@ -531,7 +531,7 @@ export function CredentialsPage({
         </div>
         <Button
           onClick={() => setShowNew(true)}
-          className="bg-cyan-600 hover:bg-cyan-500 text-white gap-2 font-medium shadow-lg shadow-cyan-500/20"
+          className="bg-blue-600 hover:bg-blue-500 text-white gap-2 font-medium shadow-lg shadow-blue-500/20"
         >
           <Plus className="size-4" />
           New Credential
@@ -543,7 +543,7 @@ export function CredentialsPage({
         {items.length === 0 ? (
           /* Empty state */
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-card/30 py-20 text-center">
-            <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+            <div className="mb-4 flex size-16 items-center justify-center rounded-2xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
               <Key className="size-8" />
             </div>
             <h3 className="mb-2 text-base font-semibold">No credentials yet</h3>
@@ -552,7 +552,7 @@ export function CredentialsPage({
             </p>
             <Button
               onClick={() => setShowNew(true)}
-              className="bg-cyan-600 hover:bg-cyan-500 text-white gap-2 font-medium shadow-md shadow-cyan-500/20"
+              className="bg-blue-600 hover:bg-blue-500 text-white gap-2 font-medium shadow-md shadow-blue-500/20"
             >
               <Plus className="size-4" />
               Add your first credential
