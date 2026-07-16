@@ -9,6 +9,7 @@ import {
 } from "@/features/workflows/lib/interpolate"
 import { getWorkflow } from "@/features/workflows/data"
 import type { NodeType } from "@/features/workflows/nodes/node-registry"
+import { createRunRecord, finishRunRecord } from "@/features/runs/actions"
 
 // One entry per node the run will walk, published to the run's metadata under
 // "steps" so the canvas — and the run console below it — can watch each node
@@ -48,6 +49,18 @@ export const runWorkflowTask = task({
       timestamp?: string
     }
   }) => {
+    const runStartTime = Date.now()
+    const triggerType = triggerPayload?.body ? "webhook" : "manual"
+
+    // Create persistent run record in Neon DB
+    let runRecordId: string | undefined = undefined
+    try {
+      const rec = await createRunRecord({ workflowId, orgId, triggerType })
+      runRecordId = rec?.id
+    } catch (e) {
+      logger.warn("Failed to create run record in DB:", { error: String(e) })
+    }
+
     const workflow = await getWorkflow(orgId, workflowId)
     if (!workflow?.graph) throw new Error(`Workflow ${workflowId} has no graph`)
 
@@ -231,6 +244,17 @@ export const runWorkflowTask = task({
         publishSteps()
         await metadata.flush()
         await stagehand?.close()
+
+        if (runRecordId) {
+          await finishRunRecord({
+            runRecordId,
+            status: "FAILED",
+            durationMs: Date.now() - runStartTime,
+            error: lastError.message,
+            steps,
+          })
+        }
+
         throw lastError
       }
 
@@ -253,6 +277,15 @@ export const runWorkflowTask = task({
     }
 
     await stagehand?.close()
+
+    if (runRecordId) {
+      await finishRunRecord({
+        runRecordId,
+        status: "COMPLETED",
+        durationMs: Date.now() - runStartTime,
+        steps,
+      })
+    }
 
     return { steps, browserbaseSessionId }
   },

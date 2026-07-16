@@ -40,3 +40,23 @@ export const credentials = pgTable("credentials", {
 
 export type Credential = typeof credentials.$inferSelect
 
+// ---------------------------------------------------------------------------
+// Workflow Runs — execution history records for auditing, debugging, & rerun.
+// ---------------------------------------------------------------------------
+
+export type RunStatus = "QUEUED" | "EXECUTING" | "COMPLETED" | "FAILED" | "CANCELED"
+
+export const workflowRuns = pgTable("workflow_runs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  workflowId: uuid("workflow_id").notNull(),
+  orgId: text("org_id").notNull(),
+  status: text("status").$type<RunStatus>().notNull().default("QUEUED"),
+  triggerType: text("trigger_type").notNull().default("manual"), // manual | webhook | cron
+  durationMs: text("duration_ms").default("0"),
+  error: text("error"),
+  steps: jsonb("steps").$type<any[]>(),
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  completedAt: timestamp("completed_at"),
+})
+
+export type WorkflowRunRecord = typeof workflowRuns.$inferSelect

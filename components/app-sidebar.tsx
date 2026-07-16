@@ -2,7 +2,7 @@ import * as React from "react"
 import { OrganizationSwitcher, UserButton } from "@clerk/nextjs"
 import { auth } from "@clerk/nextjs/server"
 import Link from "next/link"
-import { Key, LayoutDashboard } from "lucide-react"
+import { History, Key, LayoutDashboard } from "lucide-react"
 
 import {
   Sidebar,
@@ -43,13 +43,21 @@ export async function AppSidebar({
         <SidebarTrigger />
       </SidebarHeader>
       <SidebarContent>
-        {/* Dashboard quick link */}
+        {/* Dashboard quick links */}
         <SidebarMenu className="px-2 py-1">
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="Dashboard">
               <Link href="/">
                 <LayoutDashboard className="size-4" />
                 <span>Dashboard</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Executions">
+              <Link href="/runs">
+                <History className="size-4" />
+                <span>Executions</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
