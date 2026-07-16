@@ -1,12 +1,15 @@
 import type { Node } from "@xyflow/react"
 import {
   Bot,
+  Clock,
   Eye,
+  GitFork,
   Globe,
   Mail,
   MousePointerClick,
   Pointer,
   ScanText,
+  Webhook,
   type LucideIcon,
 } from "lucide-react"
 
@@ -160,6 +163,81 @@ export const nodeRegistry = {
       },
     ],
     outputs: [{ path: "id", label: "Email ID" }],
+  },
+  "if-else": {
+    type: "if-else",
+    kind: "action",
+    label: "If / Else",
+    icon: GitFork,
+    accent: "bg-indigo-500 text-white",
+    fields: [
+      {
+        key: "condition",
+        label: "Condition (NL)",
+        placeholder: "Is the price less than $100?",
+        multiline: true,
+        required: true,
+      },
+    ],
+    outputs: [
+      { path: "branch", label: "Branch (true/false)" },
+      { path: "reason", label: "Reasoning" },
+    ],
+  },
+  wait: {
+    type: "wait",
+    kind: "action",
+    label: "Wait",
+    icon: Clock,
+    accent: "bg-zinc-500 text-white",
+    fields: [
+      {
+        key: "seconds",
+        label: "Wait Seconds",
+        placeholder: "5",
+        required: true,
+      },
+    ],
+    outputs: [
+      { path: "seconds", label: "Waited Seconds" },
+    ],
+  },
+  webhook: {
+    type: "webhook",
+    kind: "action",
+    label: "Webhook",
+    icon: Webhook,
+    accent: "bg-fuchsia-500 text-white",
+    fields: [
+      {
+        key: "url",
+        label: "Webhook URL",
+        placeholder: "https://api.example.com/webhook",
+        required: true,
+      },
+      {
+        key: "method",
+        label: "Method",
+        placeholder: "POST",
+        required: true,
+      },
+      {
+        key: "headers",
+        label: "Headers (JSON)",
+        placeholder: '{"Content-Type": "application/json"}',
+        multiline: true,
+      },
+      {
+        key: "body",
+        label: "Body (JSON)",
+        placeholder: '{"data": "{{ node_id.extraction }}"}',
+        multiline: true,
+      },
+    ],
+    outputs: [
+      { path: "status", label: "Status Code" },
+      { path: "response", label: "Response" },
+    ],
   },
 } satisfies Record<string, NodeDefinition>
 

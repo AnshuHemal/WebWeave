@@ -11,6 +11,10 @@ import { observe } from "./observe"
 import { openUrl } from "./open-url"
 import { sendEmail } from "./send-email"
 
+import { ifElse } from "./if-else"
+import { waitNode } from "./wait"
+import { webhook } from "./webhook"
+
 export type NodeContext = {
   values: Record<string, string>
   getStagehand: () => Promise<Stagehand>
@@ -31,4 +35,15 @@ export const nodeExecutors: Partial<Record<NodeType, NodeExecutor>> = {
     agent({ stagehand: await getStagehand(), instruction: values.instruction }),
   "send-email": async ({ values }) =>
     sendEmail({ to: values.to, subject: values.subject, body: values.body }),
+  "if-else": async ({ values, getStagehand }) =>
+    ifElse({ stagehand: await getStagehand(), condition: values.condition }),
+  wait: async ({ values }) =>
+    waitNode({ seconds: Number(values.seconds || 0) }),
+  webhook: async ({ values }) =>
+    webhook({
+      url: values.url,
+      method: values.method,
+      headers: values.headers,
+      body: values.body,
+    }),
 } satisfies Record<ActionNodeType, NodeExecutor>

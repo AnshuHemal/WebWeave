@@ -105,19 +105,34 @@ export const runWorkflowTask = task({
     // populated by the time we run it.
     const outputs: NodeOutputs = {}
 
-    for (let i = 0; i < order.length; i++) {
-      const id = order[i]
-      const step = steps[i]
-      const node = byId.get(id)!
+    // Find the start node to begin traversal
+    const startNode = nodes.find((n) => n.data.type === "start")
+    let currentId: string | undefined = startNode?.id
+
+    const stepMap = new Map(steps.map((s) => [s.nodeId, s]))
+    const visited = new Set<string>()
+
+    while (currentId) {
+      if (visited.has(currentId)) {
+        logger.warn(`Cycle detected at node ${currentId}, breaking loop`)
+        break
+      }
+      visited.add(currentId)
+
+      const node = byId.get(currentId)!
+      const step = stepMap.get(currentId)!
       logger.log(`Running step: ${node.data.title}`)
 
       // A node with no executor (the start trigger) does no work and produces no
-      // output — mark it done rather than leaving it "pending", which reads as
-      // skipped forever in the console.
+      // output — mark it done rather than leaving it "pending".
       const executor = nodeExecutors[node.data.type]
       if (!executor) {
         step.status = "done"
         publishSteps()
+        
+        // Traverse to next node
+        const nextEdges = edges.filter((e) => e.source === currentId)
+        currentId = nextEdges[0]?.target
         continue
       }
 
@@ -141,7 +156,7 @@ export const runWorkflowTask = task({
       const startedAt = Date.now()
       try {
         const output = await executor({ values, getStagehand })
-        outputs[id] = output
+        outputs[currentId] = output
         step.output = output
       } catch (error) {
         // Flush the "failed" state before the throw unwinds the run: a thrown run
@@ -159,6 +174,19 @@ export const runWorkflowTask = task({
       step.status = "done"
       step.durationMs = Date.now() - startedAt
       publishSteps()
+
+      // Traverse to next node based on execution result
+      const nextEdges = edges.filter((e) => e.source === currentId)
+      if (nextEdges.length === 0) {
+        currentId = undefined
+      } else if (node.data.type === "if-else") {
+        const result = outputs[currentId] as { branch: string } | undefined
+        const branch = result?.branch || "true"
+        const matchingEdge = nextEdges.find((e) => e.sourceHandle === branch)
+        currentId = matchingEdge?.target
+      } else {
+        currentId = nextEdges[0].target
+      }
     }
 
     await stagehand?.close()

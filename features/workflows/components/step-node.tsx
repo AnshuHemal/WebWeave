@@ -6,6 +6,7 @@ import {
   type StepNodeType,
 } from "@/features/workflows/nodes/node-registry"
 import { useLatestRunSteps } from "@/features/workflows/components/workflow-runs-provider"
+import { NodeComments } from "@/features/workflows/components/node-comments"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 
@@ -29,12 +30,15 @@ function StepNodeComponent({ id, data, selected }: NodeProps<StepNodeType>) {
   return (
     <div
       className={cn(
-        "min-w-50 max-w-80 rounded-(--radius) border-2 border-border bg-card text-card-foreground",
+        "relative min-w-50 max-w-80 rounded-(--radius) border-2 border-border bg-card text-card-foreground",
         isRunning && "border-blue-500",
         isFailed && "border-destructive",
         selected && "ring-2 ring-ring ring-offset-2 ring-offset-background"
       )}
     >
+      {/* Node Comments Discussion Trigger */}
+      <NodeComments nodeId={id} />
+
       {hasTarget && (
         <Handle
           type="target"
@@ -73,12 +77,39 @@ function StepNodeComponent({ id, data, selected }: NodeProps<StepNodeType>) {
         </>
       )}
 
-      <Handle
-        type="source"
-        position={Position.Right}
-        style={{ transform: "translate(100%, -50%)" }}
-        className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-border!"
-      />
+      {/* Render branching handles for If/Else routing node */}
+      {type === "if-else" ? (
+        <>
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="true"
+            style={{ top: "35%", transform: "translate(100%, -50%)" }}
+            className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-indigo-500!"
+          />
+          <div className="absolute right-2.5 top-[18%] text-[8px] font-bold text-indigo-500 uppercase tracking-wider select-none pointer-events-none">
+            True
+          </div>
+
+          <Handle
+            type="source"
+            position={Position.Right}
+            id="false"
+            style={{ top: "65%", transform: "translate(100%, -50%)" }}
+            className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-rose-500!"
+          />
+          <div className="absolute right-2.5 top-[52%] text-[8px] font-bold text-rose-500 uppercase tracking-wider select-none pointer-events-none">
+            False
+          </div>
+        </>
+      ) : (
+        <Handle
+          type="source"
+          position={Position.Right}
+          style={{ transform: "translate(100%, -50%)" }}
+          className="h-3.5! w-1.5! min-w-0! rounded-l-none! rounded-r-xs! border-0! bg-border!"
+        />
+      )}
     </div>
   )
 }
