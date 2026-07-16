@@ -14,8 +14,12 @@ import {
 import { useLiveblocksFlow, Cursors } from "@liveblocks/react-flow"
 import { AvatarStack } from "@liveblocks/react-ui";
 
+import { useState } from "react"
+import { Search, Plus } from "lucide-react"
 import { StepNode } from "@/features/workflows/components/step-node"
+import { NodeCommandPalette } from "@/features/workflows/components/node-command-palette"
 import type { StepNodeType } from "@/features/workflows/nodes/node-registry"
+import { Button } from "@/components/ui/button"
 
 import "@xyflow/react/dist/style.css"
 import "@liveblocks/react-ui/styles.css";
@@ -49,6 +53,7 @@ function useMounted() {
 export function Canvas() {
   const { resolvedTheme } = useTheme()
   const mounted = useMounted()
+  const [paletteOpen, setPaletteOpen] = useState(false)
   const colorMode: ColorMode = mounted
     ? (resolvedTheme as ColorMode) ?? "light"
     : "light"
@@ -66,7 +71,7 @@ export function Canvas() {
   })
 
   return (
-    <div className="size-full">
+    <div className="relative size-full">
       <ReactFlow
         nodeTypes={nodeTypes}
         nodes={nodes}
@@ -94,10 +99,27 @@ export function Canvas() {
       >
         <Controls />
         <Cursors />
+        <Panel position="top-left" className="m-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setPaletteOpen(true)}
+            className="h-8 gap-2 bg-card/90 backdrop-blur border-border text-xs text-muted-foreground hover:text-foreground shadow-sm"
+          >
+            <Search className="size-3.5 text-blue-400" />
+            <span>Search nodes...</span>
+            <kbd className="pointer-events-none hidden sm:inline-flex h-4 select-none items-center gap-0.5 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+              <span className="text-xs">⌘</span>K
+            </kbd>
+          </Button>
+        </Panel>
         <Panel position="top-right">
           <AvatarStack />
         </Panel>
       </ReactFlow>
+
+      <NodeCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>
   )
 }
