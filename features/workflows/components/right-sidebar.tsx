@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react"
 import { useReactFlow, useStore } from "@xyflow/react"
-import { Lock, MoreHorizontal, Play, ScanSearch, Square, Trash2 } from "lucide-react"
+import { Download, Lock, MoreHorizontal, Play, ScanSearch, Square, Trash2 } from "lucide-react"
 import { ExecutionInspector } from "@/features/workflows/components/execution-inspector"
 import { MonacoField } from "@/features/workflows/components/monaco-field"
 import { ExpressionBuilder } from "@/features/workflows/components/expression-builder"
+import { downloadWorkflowJson } from "@/features/workflows/lib/import-export"
 import { toast } from "sonner"
 
 import {
@@ -387,6 +388,17 @@ function Palette() {
 // The "..." menu for workflow-level actions.
 function ActionsMenu({ workflowId }: { workflowId: string }) {
   const [isPending, startTransition] = useTransition()
+  const { getNodes, getEdges } = useReactFlow<StepNodeType>()
+
+  function handleExport() {
+    const nodes = getNodes()
+    const edges = getEdges()
+    const graph = { nodes, edges }
+    // Title fallback
+    const title = nodes.find((n) => n.data.title)?.data.title || "Workflow"
+    downloadWorkflowJson(title, graph)
+    toast.success("Workflow exported as JSON")
+  }
 
   return (
     <DropdownMenu>
@@ -396,6 +408,13 @@ function ActionsMenu({ workflowId }: { workflowId: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-48">
+        <DropdownMenuItem
+          className="text-xs [&_svg:not([class*='size-'])]:size-3.5"
+          onClick={handleExport}
+        >
+          <Download />
+          Export JSON
+        </DropdownMenuItem>
         <DropdownMenuItem
           variant="destructive"
           disabled={isPending}

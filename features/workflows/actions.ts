@@ -29,6 +29,23 @@ export async function createWorkflowAction(name: string) {
   redirect(`/workflows/${workflow.id}`)
 }
 
+export async function importWorkflowAction({
+  name,
+  graph,
+}: {
+  name: string
+  graph: WorkflowGraph
+}) {
+  const { orgId } = await auth()
+  if (!orgId) throw new Error("No active organization")
+
+  const workflow = await createWorkflow(orgId, name)
+  await saveWorkflowGraph({ orgId, id: workflow.id, graph })
+
+  revalidatePath("/workflows", "layout")
+  redirect(`/workflows/${workflow.id}`)
+}
+
 export async function deleteWorkflowAction(id: string) {
   const { orgId } = await auth()
 

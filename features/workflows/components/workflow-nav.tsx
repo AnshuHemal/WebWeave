@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/sidebar"
 import type { Workflow } from "@/lib/db/schema"
 
+import { ImportWorkflowButton } from "@/features/workflows/components/import-workflow-button"
+
 interface WorkflowNavProps {
   workflows: Workflow[]
   onCreateWorkflow: (name: string) => Promise<void>
@@ -66,7 +68,7 @@ export function WorkflowNav({ workflows, onCreateWorkflow }: WorkflowNavProps) {
                     <span>Workflows</span>
                   </SidebarMenuButton>
                 </PopoverTrigger>
-                <PopoverContent side="right" align="start" className="p-1">
+                <PopoverContent side="right" align="start" className="p-1 space-y-1">
                   <SidebarMenu>
                     <SidebarMenuItem>
                       <SidebarMenuButton
@@ -78,6 +80,9 @@ export function WorkflowNav({ workflows, onCreateWorkflow }: WorkflowNavProps) {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </SidebarMenu>
+                  <div className="px-1 py-1">
+                    <ImportWorkflowButton variant="outline" className="w-full text-xs h-7" />
+                  </div>
                   <SidebarSeparator className="mx-0" />
                   <SidebarMenu className="gap-y-0.5">{workflowItems}</SidebarMenu>
                 </PopoverContent>
@@ -100,7 +105,10 @@ export function WorkflowNav({ workflows, onCreateWorkflow }: WorkflowNavProps) {
         <PlusIcon />
         <span className="sr-only">New workflow</span>
       </SidebarGroupAction>
-      <SidebarGroupContent>
+      <SidebarGroupContent className="space-y-2">
+        <div className="px-2 pt-1">
+          <ImportWorkflowButton variant="outline" className="w-full text-xs h-7 border-dashed border-blue-500/30 text-blue-400 hover:bg-blue-500/10" />
+        </div>
         <SidebarMenu className="gap-y-0.5">{workflowItems}</SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
