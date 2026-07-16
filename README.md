@@ -2,7 +2,7 @@
 
 # 🕸️ WebWeave
 
-### *Weave intelligent browser workflows, visually.*
+### *Weave intelligent, production-grade automated workflows visually.*
 
 <p align="center">
   <img src="https://img.shields.io/badge/Next.js-16.2-black?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
@@ -12,176 +12,182 @@
   <img src="https://img.shields.io/badge/Trigger.dev-Background%20Jobs-6366F1?style=for-the-badge" alt="Trigger.dev" />
   <img src="https://img.shields.io/badge/Liveblocks-Realtime-E94D73?style=for-the-badge" alt="Liveblocks" />
   <img src="https://img.shields.io/badge/Neon-Postgres-00E699?style=for-the-badge&logo=neon&logoColor=white" alt="Neon" />
+  <img src="https://img.shields.io/badge/Monaco-Editor-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="Monaco Editor" />
 </p>
 
 <p align="center">
-  <strong>The collaborative, AI-powered browser automation platform.</strong><br/>
-  Design visual workflows, connect intelligent nodes, and let WebWeave browse, extract, act, and email — without writing a single line of scraper code.
+  <strong>The collaborative, production-grade visual workflow automation platform.</strong><br/>
+  Design workflow graphs, connect intelligent AI browser agents, run custom code scripts, poll APIs, manage secrets, and inspect real-time execution replays — all in a unified visual canvas.
 </p>
 
 <br />
 
 ```
-┌──────────────────────────────────────────────────────┐
-│  Design a workflow on a live canvas  →               │
-│  Connect nodes (Open URL, Act, Extract, Agent…)  →  │
-│  Run it in the cloud  →                              │
-│  Watch it execute in real-time  →                    │
-│  Replay the browser session as a video               │
-└──────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  Design workflow graphs on a multiplayer canvas  →          │
+│  Search & add nodes via Cmd+K Command Palette  →            │
+│  Execute HTTP APIs, AI Browser actions & Sandboxed JS  →    │
+│  Manage encrypted credentials & revision history  →         │
+│  Watch cloud execution logs & video replays in real-time    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 </div>
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
-| Feature | Description |
-|---|---|
-| 🗺️ **Visual Canvas** | Drag-and-drop node-based workflow editor powered by ReactFlow |
-| 👥 **Real-time Collaboration** | Multiple users can edit the same workflow simultaneously via Liveblocks |
-| 🤖 **AI Browser Automation** | Uses Stagehand (Browserbase) with Gemini 2.5 Flash to understand natural-language instructions |
-| ⚡ **Background Execution** | Workflows run durably in the cloud via Trigger.dev — never blocked by your browser |
-| 📹 **Session Replay** | Watch a video recording of every browser session using Browserbase's HLS replay |
-| 📊 **Live Run Console** | See per-step status (pending → running → done/failed) and duration in real time |
-| 🔒 **Org-based Auth** | Each organization has isolated workflows, enforced by Clerk |
-| 💳 **Pro Billing** | The Agent node is gated behind a Pro plan via Clerk Billing |
-| 📧 **Email Actions** | Send automated emails from within a workflow using Resend |
-| 🔍 **Error Monitoring** | Sentry integration with structured logs and source map uploads |
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                          Browser (User)                                 │
-│                                                                         │
-│   ┌─────────────────────────┐   ┌──────────────────────────────────┐   │
-│   │    ReactFlow Canvas     │   │    Run Console / Logs Panel      │   │
-│   │  (Liveblocks real-time) │   │  (Trigger.dev Realtime metadata) │   │
-│   └────────────┬────────────┘   └────────────────┬─────────────────┘   │
-│                │                                  │                     │
-└────────────────┼──────────────────────────────────┼─────────────────────┘
-                 │                                  │
-┌────────────────▼──────────────────────────────────▼─────────────────────┐
-│                          Next.js App Router                             │
-│                                                                         │
-│  Server Actions ──► Clerk Auth ──► Neon Postgres (Drizzle ORM)         │
-│  /api/liveblocks ──────────────────────────────────────────────────►   │
-│  /api/replays/[sessionId] ──► Browserbase Observability API            │
-│                                                                         │
-└─────────────────────────────────┬───────────────────────────────────────┘
-                                  │  tasks.trigger("run-workflow")
-                                  ▼
-┌─────────────────────────────────────────────────────────────────────────┐
-│                       Trigger.dev Worker                                │
-│                                                                         │
-│  run-workflow task                                                      │
-│    1. Load graph from Neon DB                                           │
-│    2. Topological sort nodes                                            │
-│    3. Walk nodes → interpolate {{ refs }} → execute                     │
-│    4. Open lazy Stagehand session (Browserbase cloud browser)           │
-│    5. Publish live step metadata → canvas reads it                      │
-│    6. Return { steps, browserbaseSessionId }                            │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 🧩 Workflow Nodes
-
-These are the building blocks you can connect on the canvas:
-
-| Node | Icon Color | What it does |
+| Category | Feature | Description |
 |---|---|---|
-| **Start** | 🔵 Blue | Trigger node — every workflow starts here |
-| **Open URL** | 🟢 Emerald | Navigate the browser to a URL |
-| **Act** | 🟣 Violet | Perform a natural-language browser action (click, type, etc.) |
-| **Extract** | 🟡 Amber | Extract structured data from the current page |
-| **Observe** | 🩵 Sky | Identify interactive elements without clicking them |
-| **Agent** | 🔴 Rose | Autonomous multi-step AI agent *(Pro plan only)* |
-| **Send Email** | 🩵 Teal | Send an email via Resend |
-
-Nodes are **output-aware**: each node exposes typed outputs (e.g. `url`, `title`, `extraction`) that downstream nodes can reference using `{{ nodeId.path }}` template syntax.
+| 🗺️ **Visual Canvas** | **ReactFlow & Liveblocks** | Drag-and-drop node graph editor with multiplayer real-time collaboration |
+| 🔍 **Quick Navigation** | **Cmd+K Command Palette** | Keyboard-driven fuzzy node search & placement directly into canvas viewport |
+| 📜 **Execution History** | **Runs Dashboard (`/runs`)** | Full execution logs, status filters, duration metrics, and 1-click rerun triggers |
+| 🔒 **Secrets Vault** | **Credentials (`/credentials`)** | AES-256-GCM encrypted key manager for headers, Bearer tokens, and basic auth |
+| 💻 **Custom Code** | **Monaco Code Editor** | Run sandboxed JavaScript transformations with VS Code syntax formatting |
+| 🌐 **REST Integration** | **HTTP Request Engine** | Complete REST node supporting GET, POST, PUT, DELETE with custom auth & bodies |
+| 📚 **Templates Library** | **Workflow Starter Gallery** | 1-click cloneable production templates for Webhooks, Scraping, & APIs |
+| 🏷️ **Documentation** | **Interactive Sticky Notes** | Resizable pastel canvas notes for inline team documentation & annotations |
+| 📑 **Revision Control** | **Version History Snapshots** | Automated DB graph snapshots with 1-click version rollback capability |
+| 🔄 **Iteration & Logic** | **Loop Node & Error Trigger** | Process items sequentially and catch workflow exceptions with `$error` tokens |
+| 📋 **Multi-Node Copy** | **Clipboard Support (`Cmd+C/V`)** | Duplicate nodes and interconnecting edges with position offsets and ID remapping |
+| 🤖 **AI Web Automation** | **Stagehand & Browserbase** | Natural-language AI browser scraping (`act`, `extract`, `observe`, `agent`) |
 
 ---
 
-## 📁 Project Structure
+## 🏗️ Architecture & Flow
 
 ```
-browser-automation-app/
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                               Browser Client                                 │
+│                                                                              │
+│  ┌──────────────────────────┐  ┌────────────────────┐  ┌──────────────────┐  │
+│  │   ReactFlow Canvas       │  │  Cmd+K Palette /   │  │  Runs Dashboard  │  │
+│  │ (Liveblocks Real-time)   │  │  Templates Modal   │  │  & Logs Drawer   │  │
+│  └────────────┬─────────────┘  └─────────┬──────────┘  └────────┬─────────┘  │
+│               │                          │                      │            │
+└───────────────┼──────────────────────────┼──────────────────────┼────────────┘
+                │                          │                      │
+┌───────────────▼──────────────────────────▼──────────────────────▼────────────┐
+│                             Next.js App Router                               │
+│                                                                              │
+│  Server Actions ──► Clerk Auth ──► Neon Postgres (AES-256 Encrypted Vault)   │
+│  /credentials ────► Encrypted Secrets Engine                                 │
+│  /runs ───────────► DB Run Records & Re-execution                            │
+│  /api/replays ────► Browserbase Cloud HLS Video Proxy                        │
+│                                                                              │
+└─────────────────────────────────────┬────────────────────────────────────────┘
+                                      │  tasks.trigger("run-workflow")
+                                      ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                             Trigger.dev Worker                               │
+│                                                                              │
+│  runWorkflowTask                                                             │
+│    1. Load graph & credentials from Neon DB                                  │
+│    2. Toposort nodes & validate dependency graph                             │
+│    3. Resolve {{ nodeId.path }} & {{ $error.message }} interpolation tokens  │
+│    4. Execute nodes (REST API, Monaco JS Sandbox, Stagehand Cloud Browser)   │
+│    5. Publish step progress metadata live → Canvas & Runs inspector           │
+│    6. Save execution record in DB & close session                            │
+│                                                                              │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 🧩 Node Registry
+
+WebWeave includes a registry-driven collection of specialized workflow nodes:
+
+### ⚡ Triggers
+- **Start** — Standard manual execution trigger.
+- **Webhook Trigger** — Listens for incoming POST/GET HTTP payloads.
+- **Cron Trigger** — Scheduled recurring cron execution.
+- **On Error Trigger** — Catches unhandled step exceptions with `{{ $error.message }}` resolution.
+
+### 🛠️ Actions & Integrations
+- **HTTP Request** — Makes REST API calls with Bearer/Basic/API Key auth and custom headers.
+- **JavaScript Code** — Runs sandboxed custom JS scripts using Monaco Editor.
+- **Open URL** — Navigates Stagehand browser to any target URL.
+- **Act** — Executes natural-language browser interactions (e.g. *Click "Submit"*).
+- **Extract** — Extracts structured data from active web pages using LLMs.
+- **Observe** — Inspects interactive elements on web pages.
+- **Agent** — Autonomous multi-step AI web browsing agent *(Pro Plan)*.
+- **Loop / Iterator** — Sequentially iterates over arrays and JSON lists (`item`, `index`, `total`).
+- **If / Else** — Conditional branching based on expressions.
+- **Slack Notify** — Sends formatted notification messages to Slack channels.
+- **Google Sheets Append** — Appends structured rows to Google Sheets spreadsheets.
+- **Send Email** — Delivers automated emails via Resend.
+- **Wait** — Delays workflow execution by specified duration.
+- **Sticky Note** — Resizable canvas documentation sticky note.
+
+---
+
+## 📁 Repository Structure
+
+```
+WebWeave/
 ├── app/
-│   ├── (auth)/                    # Clerk sign-in / sign-up pages
+│   ├── (auth)/                    # Clerk Sign-in / Sign-up routes
 │   ├── (dashboard)/
-│   │   ├── page.tsx               # Home dashboard
-│   │   ├── layout.tsx             # Sidebar layout
-│   │   ├── billing/               # Clerk Billing / subscription
-│   │   └── workflows/[id]/        # Per-workflow canvas page
-│   ├── api/
-│   │   ├── liveblocks/            # Liveblocks auth endpoint
-│   │   └── replays/[sessionId]/   # Browserbase HLS replay proxy
-│   ├── layout.tsx                 # Root layout (ClerkProvider, ThemeProvider)
-│   └── globals.css                # Design tokens, Tailwind base
+│   │   ├── page.tsx               # Dashboard homepage
+│   │   ├── layout.tsx             # Shared navigation sidebar
+│   │   ├── credentials/           # Encrypted Secrets Manager page
+│   │   ├── runs/                  # Execution History dashboard page
+│   │   └── workflows/[id]/        # Visual workflow editor route
+│   └── api/
+│       ├── liveblocks/            # Real-time collaboration endpoint
+│       └── replays/[sessionId]/   # HLS video stream proxy
 │
-├── features/workflows/
-│   ├── actions.ts                 # Server Actions (create, delete, run, cancel)
-│   ├── data.ts                    # DB queries (list, get, save, create, delete)
-│   ├── nodes/
-│   │   ├── node-registry.ts       # Node manifest: type, label, icon, fields, outputs
-│   │   ├── node-executors.ts      # Maps node type → executor function
-│   │   ├── open-url.ts            # Executor: navigate to URL
-│   │   ├── act.ts                 # Executor: Stagehand act()
-│   │   ├── extract.ts             # Executor: Stagehand extract()
-│   │   ├── observe.ts             # Executor: Stagehand observe()
-│   │   ├── agent.ts               # Executor: Stagehand agent()
-│   │   └── send-email.ts          # Executor: Resend email
-│   ├── tasks/
-│   │   └── run-workflow.ts        # Trigger.dev background task
-│   ├── lib/
-│   │   └── interpolate.ts         # {{ nodeId.path }} template resolver
-│   └── components/
-│       ├── canvas.tsx             # ReactFlow canvas wrapper
-│       ├── step-node.tsx          # Custom canvas node component
-│       ├── right-sidebar.tsx      # Node inspector / field editor
-│       ├── logs-panel.tsx         # Per-step run log with status
-│       ├── console-panel.tsx      # Run metadata & output viewer
-│       ├── session-replay.tsx     # Browserbase HLS video player
-│       ├── workflow-nav.tsx       # Sidebar workflow list + create
-│       └── workflow-runs-provider.tsx  # Trigger.dev realtime hook
-│
-├── components/
-│   ├── app-sidebar.tsx            # App shell sidebar (Org switcher, UserButton)
-│   └── ui/                        # shadcn/ui component library
+├── features/
+│   ├── credentials/               # AES-256-GCM secret actions & components
+│   ├── runs/                      # Execution history data access & UI drawer
+│   └── workflows/
+│       ├── actions.ts             # Server actions (run, import, export, versions)
+│       ├── data.ts                # Database query layer (workflows, versions)
+│       ├── hooks/
+│       │   ├── use-copy-paste.ts  # Canvas Cmd+C / Cmd+V copy-paste hook
+│       │   └── use-pro-plan.ts    # Clerk Pro tier authorization hook
+│       ├── lib/
+│       │   ├── import-export.ts   # JSON graph import/export validator
+│       │   ├── interpolate.ts     # {{ token }} & {{ $error }} variable resolver
+│       │   ├── templates.ts       # Starter template definitions
+│       │   └── validate-graph.ts  # Node & edge topological graph validator
+│       ├── nodes/
+│       │   ├── node-registry.ts   # Master node manifest (types, icons, schema)
+│       │   ├── node-executors.ts  # Node execution handler router
+│       │   ├── code.ts            # Sandboxed JS code execution
+│       │   └── http-request.ts    # REST HTTP client execution
+│       ├── tasks/
+│       │   └── run-workflow.ts    # Trigger.dev cloud execution task
+│       └── components/
+│           ├── canvas.tsx         # ReactFlow visual canvas with multiplayer sync
+│           ├── node-command-palette.tsx  # Cmd+K quick node search modal
+│           ├── templates-modal.tsx       # Workflow starter gallery modal
+│           ├── version-history-drawer.tsx# Revision history & rollback drawer
+│           ├── expression-builder.tsx    # Upstream variable popover picker
+│           ├── monaco-field.tsx          # Embedded VS Code Monaco editor
+│           ├── sticky-note-node.tsx      # Resizable canvas sticky notes
+│           └── right-sidebar.tsx         # Node inspector & workflow menu
 │
 ├── lib/
-│   ├── db/
-│   │   ├── schema.ts              # Drizzle schema (workflows table)
-│   │   └── index.ts               # Neon DB connection
-│   ├── browserbase.ts             # Browserbase SDK client
-│   ├── liveblocks.ts              # Liveblocks client
-│   ├── resend.ts                  # Resend email client
-│   └── utils.ts                   # cn() and other utilities
+│   ├── crypto.ts                  # AES-256-GCM encryption engine
+│   └── db/
+│       ├── schema.ts              # Drizzle ORM schema (workflows, credentials, runs, versions)
+│       └── index.ts               # Neon serverless Postgres client
 │
-├── proxy.ts                       # Clerk middleware (auth guard + matchers)
-├── trigger.config.ts              # Trigger.dev configuration
-├── drizzle.config.ts              # Drizzle Kit configuration
-└── next.config.ts                 # Next.js + Sentry configuration
+└── drizzle.config.ts              # Database migration configuration
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start Guide
 
 ### Prerequisites
+- **Node.js** v20+
+- Accounts for: [Clerk](https://clerk.com), [Neon Postgres](https://neon.tech), [Trigger.dev](https://trigger.dev), [Browserbase](https://browserbase.com), [Liveblocks](https://liveblocks.io), [Resend](https://resend.com)
 
-- **Node.js** 20+
-- **npm** / pnpm / yarn
-- Accounts for: [Clerk](https://clerk.com), [Neon](https://neon.tech), [Browserbase](https://browserbase.com), [Trigger.dev](https://trigger.dev), [Liveblocks](https://liveblocks.io), [Resend](https://resend.com)
-
-### 1. Clone & Install
+### 1. Clone & Install Dependencies
 
 ```bash
 git clone https://github.com/AnshuHemal/WebWeave.git
@@ -189,179 +195,77 @@ cd WebWeave
 npm install
 ```
 
-### 2. Configure Environment
+### 2. Set Up Environment Variables
 
-Copy the example env file and fill in your keys:
-
-```bash
-cp .env.example .env.local
-```
+Create `.env.local` in the project root:
 
 ```env
-# Clerk Authentication
+# Clerk Authentication & Billing
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
-NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
 
-# Neon Serverless Postgres
+# Database (Neon Serverless Postgres)
 DATABASE_URL=postgresql://...
-DATABASE_URL_UNPOOLED=postgresql://...
-NEON_BRANCH=main
 
-# Trigger.dev (Background Tasks)
+# Credentials Secret (32-byte AES-256 Encryption Key)
+CREDENTIALS_SECRET=your_32_character_secret_key_here
+
+# Trigger.dev Background Task Engine
 TRIGGER_SECRET_KEY=tr_dev_...
 
-# Liveblocks (Real-time Collaboration)
+# Liveblocks Real-time Canvas Sync
 NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY=pk_dev_...
 LIVEBLOCKS_SECRET_KEY=sk_dev_...
 
-# Browserbase (Cloud Browser)
+# Browserbase & Stagehand AI Browser
 BROWSERBASE_API_KEY=bb_live_...
+BROWSERBASE_PROJECT_ID=...
 
-# Resend (Email)
+# Resend Email Delivery
 RESEND_API_KEY=re_...
-
-# Sentry (Error Monitoring)
-NEXT_PUBLIC_SENTRY_DSN=https://...
-SENTRY_DSN=https://...
-SENTRY_AUTH_TOKEN=sntrys_...
 ```
 
-### 3. Push Database Schema
+### 3. Synchronize Database Schema
 
 ```bash
-npm run db:push
+npx drizzle-kit push
 ```
 
-### 4. Start Development Servers
+### 4. Run Development Services
 
-In one terminal, start Next.js:
-
+In terminal 1 (Next.js App):
 ```bash
 npm run dev
 ```
 
-In a second terminal, start the Trigger.dev worker:
-
+In terminal 2 (Trigger.dev Worker):
 ```bash
 npx trigger.dev@latest dev
 ```
 
-Your app is now running at **[http://localhost:3000](http://localhost:3000)**.
+Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 ---
 
-## 🔧 Adding a New Workflow Node
+## 📜 NPM Commands
 
-Adding a new node type requires exactly **3 files**:
-
-```
-1. features/workflows/nodes/my-node.ts       ← executor logic
-2. features/workflows/nodes/node-executors.ts ← register it here
-3. features/workflows/nodes/node-registry.ts  ← add manifest entry
-```
-
-**Step 1** — Write the executor (`my-node.ts`):
-
-```ts
-import type { NodeExecutor } from "./node-executors"
-
-export const myNodeExecutor: NodeExecutor = async ({ values, getStagehand }) => {
-  const stagehand = await getStagehand()
-  // ...your logic here
-  return { result: "..." }
-}
-```
-
-**Step 2** — Register in `node-executors.ts`:
-
-```ts
-import { myNodeExecutor } from "./my-node"
-
-export const nodeExecutors = {
-  // existing executors...
-  "my-node": myNodeExecutor,
-} satisfies Partial<Record<ActionNodeType, NodeExecutor>>
-```
-
-**Step 3** — Add the manifest in `node-registry.ts`:
-
-```ts
-"my-node": {
-  type: "my-node",
-  kind: "action",
-  label: "My Node",
-  icon: SomeIcon,
-  accent: "bg-purple-500 text-white",
-  fields: [
-    { key: "someField", label: "Some Field", placeholder: "...", required: true },
-  ],
-  outputs: [
-    { path: "result", label: "Result" },
-  ],
-},
-```
-
-The canvas, inspector panel, run task, and logs panel are all **registry-driven** — no other files need to be touched.
-
----
-
-## 📜 Available Scripts
-
-| Script | Description |
+| Command | Action |
 |---|---|
-| `npm run dev` | Start Next.js development server with Turbopack |
-| `npm run build` | Production build |
-| `npm run lint` | ESLint check |
-| `npm run typecheck` | TypeScript type check (no emit) |
-| `npm run format` | Prettier format all `.ts` / `.tsx` files |
-| `npm run db:generate` | Generate Drizzle migration files |
-| `npm run db:migrate` | Apply migrations to the database |
-| `npm run db:push` | Push schema directly to database (dev) |
-| `npm run db:studio` | Open Drizzle Studio database UI |
-
----
-
-## 🛡️ Authentication & Authorization
-
-- **Clerk** handles all auth: sign-in, sign-up, organization switching, and session management.
-- **Organization-scoped**: all workflows are isolated per Clerk `orgId`. Users must be in an organization to create or run workflows.
-- **Pro plan gate**: the `Agent` node is restricted to organizations on the Pro Clerk Billing plan, enforced in `runWorkflowAction` via `has({ plan: "pro" })`.
-- **Middleware**: `proxy.ts` uses `clerkMiddleware` to protect all routes except `/sign-in` and `/sign-up`. The `/__clerk/:path*` auto-proxy matcher is included.
-
----
-
-## 🔗 Key Technologies
-
-| Technology | Purpose |
-|---|---|
-| [Next.js 16 (App Router)](https://nextjs.org) | Full-stack React framework with Server Actions |
-| [Clerk](https://clerk.com) | Authentication, organizations, and billing |
-| [Stagehand](https://github.com/browserbasehq/stagehand) | AI-powered browser automation (`act`, `extract`, `observe`, `agent`) |
-| [Browserbase](https://browserbase.com) | Cloud browser infrastructure and session recording |
-| [Trigger.dev](https://trigger.dev) | Durable background task execution |
-| [ReactFlow / @xyflow/react](https://reactflow.dev) | Visual node-based canvas editor |
-| [Liveblocks](https://liveblocks.io) | Real-time collaborative canvas state |
-| [Neon](https://neon.tech) | Serverless Postgres database |
-| [Drizzle ORM](https://orm.drizzle.team) | Type-safe SQL query builder and schema migrations |
-| [Resend](https://resend.com) | Transactional email delivery |
-| [Sentry](https://sentry.io) | Error monitoring and structured logging |
-| [shadcn/ui](https://ui.shadcn.com) | Accessible component library |
-| [Radix UI](https://www.radix-ui.com) | Headless UI primitives |
-| [TailwindCSS v4](https://tailwindcss.com) | Utility-first styling |
-| [hls.js](https://github.com/video-dev/hls.js) | HLS video playback for session replays |
+| `npm run dev` | Starts Next.js development server with Turbopack |
+| `npm run build` | Builds production output bundle |
+| `npm run typecheck` | Validates TypeScript types (`tsc --noEmit`) |
+| `npm run lint` | Runs ESLint analysis |
+| `npx drizzle-kit push` | Applies schema migrations directly to Neon Postgres |
+| `npx drizzle-kit studio` | Opens Drizzle Studio browser database GUI |
 
 ---
 
 ## 📄 License
 
-MIT — see [LICENSE](LICENSE) for details.
-
----
+Distributed under the MIT License. See `LICENSE` for details.
 
 <div align="center">
-  <sub>⚡ <strong>WebWeave</strong> — Weave intelligent browser workflows, visually.<br/>Built with ❤️ using Next.js, Stagehand, Trigger.dev, and Liveblocks</sub>
+  <sub>Built with ❤️ using Next.js 16, Stagehand, Trigger.dev, Liveblocks, and Neon Postgres.</sub>
 </div>
