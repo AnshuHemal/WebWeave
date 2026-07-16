@@ -4,6 +4,7 @@ import { useState, useTransition } from "react"
 import { useReactFlow, useStore } from "@xyflow/react"
 import { Lock, MoreHorizontal, Play, ScanSearch, Square, Trash2 } from "lucide-react"
 import { ExecutionInspector } from "@/features/workflows/components/execution-inspector"
+import { MonacoField } from "@/features/workflows/components/monaco-field"
 import { toast } from "sonner"
 
 import {
@@ -78,8 +79,8 @@ function Section({
 // Editor tab — edits the fields of the selected node.
 // ---------------------------------------------------------------------------
 
-// A single editor field for a node property. Renders a multi-line textarea when
-// the field opts in via `multiline`, otherwise a single-line input.
+// A single editor field for a node property. Renders a Monaco editor for monaco
+// fields, a multi-line textarea for multiline, or a single-line input.
 function Field({
   field,
   value,
@@ -93,6 +94,18 @@ function Field({
   // field a clicked token should land in.
   onFocus: () => void
 }) {
+  if (field.monaco) {
+    return (
+      <div onClick={onFocus}>
+        <MonacoField
+          value={value}
+          onChange={onChange}
+          placeholder={field.placeholder}
+        />
+      </div>
+    )
+  }
+
   if (field.multiline) {
     return (
       <Textarea

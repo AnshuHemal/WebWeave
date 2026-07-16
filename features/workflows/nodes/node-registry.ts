@@ -2,9 +2,11 @@ import type { Node } from "@xyflow/react"
 import {
   Bot,
   Clock,
+  Code2,
   Eye,
   GitFork,
   Globe,
+  Globe2,
   Mail,
   MessageSquare,
   MousePointerClick,
@@ -24,6 +26,8 @@ export type NodeField = {
   placeholder?: string
   // Render as a multi-line textarea instead of a single-line input.
   multiline?: boolean
+  // Render as a Monaco (VS Code) code editor for JavaScript/JSON.
+  monaco?: boolean
   required?: boolean
 }
 
@@ -333,6 +337,111 @@ export const nodeRegistry = {
     ],
     outputs: [
       { path: "updatedRange", label: "Updated Range" },
+    ],
+  },
+  "http-request": {
+    type: "http-request",
+    kind: "action",
+    label: "HTTP Request",
+    icon: Globe2,
+    accent: "bg-indigo-600 text-white",
+    fields: [
+      {
+        key: "url",
+        label: "URL",
+        placeholder: "https://api.example.com/data",
+        required: true,
+      },
+      {
+        key: "method",
+        label: "Method",
+        placeholder: "GET",
+        required: true,
+      },
+      {
+        key: "authType",
+        label: "Auth Type",
+        placeholder: "none | bearer | apikey-header | apikey-query | basic",
+      },
+      {
+        key: "authToken",
+        label: "Bearer / API Key Value",
+        placeholder: "sk-...",
+      },
+      {
+        key: "authKeyName",
+        label: "API Key Header / Param Name",
+        placeholder: "X-API-Key",
+      },
+      {
+        key: "authUsername",
+        label: "Basic Auth Username",
+        placeholder: "admin",
+      },
+      {
+        key: "authPassword",
+        label: "Basic Auth Password",
+        placeholder: "••••••••",
+      },
+      {
+        key: "headers",
+        label: "Headers (JSON)",
+        placeholder: '{"Accept": "application/json"}',
+        multiline: true,
+      },
+      {
+        key: "queryParams",
+        label: "Query Params (JSON)",
+        placeholder: '{"page": "1", "limit": "50"}',
+        multiline: true,
+      },
+      {
+        key: "bodyType",
+        label: "Body Type",
+        placeholder: "none | json | form | raw",
+      },
+      {
+        key: "body",
+        label: "Request Body",
+        placeholder: '{"name": "{{ extract_1.name }}"}',
+        multiline: true,
+      },
+      {
+        key: "timeoutMs",
+        label: "Timeout (ms)",
+        placeholder: "30000",
+      },
+    ],
+    outputs: [
+      { path: "status", label: "Status Code" },
+      { path: "ok", label: "Success" },
+      { path: "body", label: "Response Body" },
+      { path: "headers", label: "Response Headers" },
+    ],
+  },
+  code: {
+    type: "code",
+    kind: "action",
+    label: "Code",
+    icon: Code2,
+    accent: "bg-amber-500 text-white",
+    fields: [
+      {
+        key: "code",
+        label: "JavaScript Code",
+        placeholder: "// $input contains the output of the previous node\nreturn $input;",
+        monaco: true,
+        required: true,
+      },
+      {
+        key: "timeout",
+        label: "Timeout (ms)",
+        placeholder: "10000",
+      },
+    ],
+    outputs: [
+      { path: "result", label: "Return Value" },
+      { path: "logs", label: "Console Logs" },
     ],
   },
 } satisfies Record<string, NodeDefinition>

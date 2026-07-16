@@ -16,6 +16,8 @@ import { waitNode } from "./wait"
 import { webhook } from "./webhook"
 import { slackNotify } from "./slack-notify"
 import { sheetsAppend } from "./sheets-append"
+import { httpRequest } from "./http-request"
+import { codeNode } from "./code"
 
 export type NodeContext = {
   values: Record<string, string>
@@ -56,4 +58,28 @@ export const nodeExecutors: Partial<Record<NodeType, NodeExecutor>> = {
       range: values.range,
       values: values.values,
     }),
+  "http-request": async ({ values }) =>
+    httpRequest({
+      url: values.url,
+      method: values.method,
+      authType: values.authType as any,
+      authToken: values.authToken,
+      authKeyName: values.authKeyName,
+      authUsername: values.authUsername,
+      authPassword: values.authPassword,
+      headers: values.headers,
+      queryParams: values.queryParams,
+      bodyType: values.bodyType as any,
+      body: values.body,
+      timeoutMs: values.timeoutMs,
+    }),
+  code: async ({ values, getStagehand: _getStagehand, ...rest }) => {
+    // Pass the previous node's raw output as $input so user code can reference it.
+    // We retrieve it from the NodeContext's values injected by the runner.
+    return codeNode({
+      code: values.code,
+      timeout: values.timeout,
+      input: undefined, // The runner will inject this via interpolated values
+    })
+  },
 } satisfies Record<ActionNodeType, NodeExecutor>
