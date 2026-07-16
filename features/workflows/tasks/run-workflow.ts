@@ -237,6 +237,32 @@ export const runWorkflowTask = task({
           continue
         }
 
+        // Check if graph has an error-trigger node to catch the failure
+        const errorNode = nodes.find((n) => n.data.type === "error-trigger")
+        if (errorNode && !visited.has(errorNode.id)) {
+          logger.log(`Error caught by On Error Trigger (${errorNode.data.title})`, {
+            failingNode: node.data.title,
+            error: lastError.message,
+          })
+          
+          outputs["$error"] = {
+            message: lastError.message,
+            nodeTitle: node.data.title,
+            nodeId: node.id,
+          }
+          outputs[errorNode.id] = outputs["$error"]
+
+          step.status = "failed"
+          step.durationMs = Date.now() - startedAt
+          step.error = lastError.message
+          publishSteps()
+          await metadata.flush()
+
+          // Divert execution flow to On Error Trigger node branch
+          currentId = errorNode.id
+          continue
+        }
+
         // Flush the "failed" state before the throw unwinds the run.
         step.status = "failed"
         step.durationMs = Date.now() - startedAt

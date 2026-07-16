@@ -1,5 +1,6 @@
 import type { Node } from "@xyflow/react"
 import {
+  AlertTriangle,
   Bot,
   Clock,
   Code2,
@@ -11,6 +12,7 @@ import {
   MessageSquare,
   MousePointerClick,
   Pointer,
+  Repeat,
   ScanText,
   StickyNote,
   Table,
@@ -460,6 +462,51 @@ export const nodeRegistry = {
       },
     ],
     outputs: [],
+  },
+  loop: {
+    type: "loop",
+    kind: "action",
+    label: "Loop / Iterator",
+    icon: Repeat,
+    accent: "bg-indigo-600 text-white",
+    fields: [
+      {
+        key: "items",
+        label: "Array Expression",
+        placeholder: "{{ extract_1.data }} or [1, 2, 3]",
+        required: true,
+      },
+      {
+        key: "maxIterations",
+        label: "Max Iterations",
+        placeholder: "50",
+      },
+    ],
+    outputs: [
+      { path: "item", label: "Current Item" },
+      { path: "index", label: "Current Index" },
+      { path: "total", label: "Total Items" },
+      { path: "items", label: "Processed Array" },
+    ],
+  },
+  "error-trigger": {
+    type: "error-trigger",
+    kind: "trigger",
+    label: "On Error Trigger",
+    icon: AlertTriangle,
+    accent: "bg-rose-600 text-white",
+    fields: [
+      {
+        key: "catchAll",
+        label: "Catch All Failures",
+        placeholder: "true",
+      },
+    ],
+    outputs: [
+      { path: "message", label: "Error Message" },
+      { path: "nodeTitle", label: "Failing Node" },
+      { path: "nodeId", label: "Failing Node ID" },
+    ],
   },
 } satisfies Record<string, NodeDefinition>
 

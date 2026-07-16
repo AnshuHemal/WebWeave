@@ -1,7 +1,7 @@
 import { and, desc, eq } from "drizzle-orm"
 
 import { db } from "@/lib/db"
-import { WorkflowGraph, workflows } from "@/lib/db/schema"
+import { WorkflowGraph, workflows, workflowVersions } from "@/lib/db/schema"
 import { validateGraph } from "@/features/workflows/lib/validate-graph"
 
 export async function saveWorkflowGraph({
@@ -54,4 +54,49 @@ export async function deleteWorkflow(orgId: string, id: string) {
     .returning()
 
   return workflow
+}
+
+export async function createVersionSnapshot({
+  workflowId,
+  name,
+  graph,
+}: {
+  workflowId: string
+  name: string
+  graph: WorkflowGraph
+}) {
+  const existing = await db
+    .select()
+    .from(workflowVersions)
+    .where(eq(workflowVersions.workflowId, workflowId))
+
+  const versionNumber = existing.length + 1
+
+  const [version] = await db
+    .insert(workflowVersions)
+    .values({
+      workflowId,
+      versionNumber,
+      name,
+      graph,
+    })
+    .returning()
+
+  return version
+}
+
+export function listWorkflowVersions(workflowId: string) {
+  return db
+    .select()
+    .from(workflowVersions)
+    .where(eq(workflowVersions.workflowId, workflowId))
+    .orderBy(desc(workflowVersions.createdAt))
+}
+
+export async function getWorkflowVersion(versionId: string) {
+  const [v] = await db
+    .select()
+    .from(workflowVersions)
+    .where(eq(workflowVersions.id, versionId))
+  return v
 }

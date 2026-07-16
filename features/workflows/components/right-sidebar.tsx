@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react"
 import { useReactFlow, useStore } from "@xyflow/react"
-import { Download, Lock, MoreHorizontal, Play, ScanSearch, Square, Trash2 } from "lucide-react"
+import { Download, History, Lock, MoreHorizontal, Play, ScanSearch, Square, Trash2 } from "lucide-react"
 import { ExecutionInspector } from "@/features/workflows/components/execution-inspector"
 import { MonacoField } from "@/features/workflows/components/monaco-field"
 import { ExpressionBuilder } from "@/features/workflows/components/expression-builder"
+import { VersionHistoryDrawer } from "@/features/workflows/components/version-history-drawer"
 import { downloadWorkflowJson } from "@/features/workflows/lib/import-export"
 import { toast } from "sonner"
 
@@ -388,6 +389,7 @@ function Palette() {
 // The "..." menu for workflow-level actions.
 function ActionsMenu({ workflowId }: { workflowId: string }) {
   const [isPending, startTransition] = useTransition()
+  const [showVersions, setShowVersions] = useState(false)
   const { getNodes, getEdges } = useReactFlow<StepNodeType>()
 
   function handleExport() {
@@ -401,39 +403,54 @@ function ActionsMenu({ workflowId }: { workflowId: string }) {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="icon" variant="ghost">
-          <MoreHorizontal />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-48">
-        <DropdownMenuItem
-          className="text-xs [&_svg:not([class*='size-'])]:size-3.5"
-          onClick={handleExport}
-        >
-          <Download />
-          Export JSON
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          variant="destructive"
-          disabled={isPending}
-          className="text-xs [&_svg:not([class*='size-'])]:size-3.5"
-          onSelect={(e) => {
-            // Keep the menu mounted while the delete runs so the disabled state
-            // stays visible. Running inside a transition lets the router handle
-            // the action's redirect home on success.
-            e.preventDefault()
-            startTransition(async () => {
-              await deleteWorkflowAction(workflowId)
-            })
-          }}
-        >
-          <Trash2 />
-          Delete workflow
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size="icon" variant="ghost">
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="min-w-48">
+          <DropdownMenuItem
+            className="text-xs [&_svg:not([class*='size-'])]:size-3.5"
+            onClick={() => setShowVersions(true)}
+          >
+            <History />
+            Version History
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-xs [&_svg:not([class*='size-'])]:size-3.5"
+            onClick={handleExport}
+          >
+            <Download />
+            Export JSON
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            variant="destructive"
+            disabled={isPending}
+            className="text-xs [&_svg:not([class*='size-'])]:size-3.5"
+            onSelect={(e) => {
+              // Keep the menu mounted while the delete runs so the disabled state
+              // stays visible. Running inside a transition lets the router handle
+              // the action's redirect home on success.
+              e.preventDefault()
+              startTransition(async () => {
+                await deleteWorkflowAction(workflowId)
+              })
+            }}
+          >
+            <Trash2 />
+            Delete workflow
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <VersionHistoryDrawer
+        workflowId={workflowId}
+        open={showVersions}
+        onOpenChange={setShowVersions}
+      />
+    </>
   )
 }
 

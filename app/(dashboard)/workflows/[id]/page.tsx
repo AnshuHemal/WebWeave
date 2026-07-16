@@ -51,7 +51,7 @@ export default async function Page({
     <Room roomId={id}>
       <ReactFlowProvider>
         <WorkflowRunsProvider workflowId={id} accessToken={runsToken}>
-          <WorkflowShell workflowId={id} />
+          <WorkflowShell workflowId={id} initialGraph={workflow.graph || undefined} />
         </WorkflowRunsProvider>
       </ReactFlowProvider>
     </Room>

@@ -1,5 +1,5 @@
 import type { Edge } from "@xyflow/react"
-import { jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
+import { integer, json, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core"
 
 import type { StepNodeType } from "@/features/workflows/nodes/node-registry"
 
@@ -60,3 +60,23 @@ export const workflowRuns = pgTable("workflow_runs", {
 })
 
 export type WorkflowRunRecord = typeof workflowRuns.$inferSelect
+
+// ---------------------------------------------------------------------------
+// Workflow Versions — historical snapshots saved whenever workflows update.
+// ---------------------------------------------------------------------------
+
+export const workflowVersions = pgTable("workflow_versions", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  workflowId: uuid("workflow_id")
+    .notNull()
+    .references(() => workflows.id, { onDelete: "cascade" }),
+  versionNumber: integer("version_number").notNull(),
+  name: text("name").notNull(),
+  graph: json("graph").$type<WorkflowGraph>().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
+export type WorkflowVersion = typeof workflowVersions.$inferSelect
+export type NewWorkflowVersion = typeof workflowVersions.$inferInsert

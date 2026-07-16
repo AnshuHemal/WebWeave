@@ -10,7 +10,15 @@ const PLACEHOLDER = /\{\{\s*([^}]+?)\s*\}\}/g
 // treating the first segment as the node id. Returns undefined the moment the
 // path leaves an object rather than throwing.
 function getByPath(root: NodeOutputs, path: string): unknown {
-  const keys = path
+  const trimmed = path.trim()
+  if (trimmed.startsWith("$error.")) {
+    const errorScope = root["$error"] as Record<string, unknown> | undefined
+    if (!errorScope) return undefined
+    const subPath = trimmed.slice(7)
+    return getByPath(errorScope, subPath)
+  }
+
+  const keys = trimmed
     .replace(/\[(\w+)\]/g, ".$1") // items[0] -> items.0
     .split(".")
     .filter(Boolean)

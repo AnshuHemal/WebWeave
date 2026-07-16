@@ -81,4 +81,32 @@ export const nodeExecutors: Partial<Record<NodeType, NodeExecutor>> = {
     })
   },
   sticky: async () => ({}),
+  loop: async ({ values }) => {
+    let parsedItems: any[] = []
+    const raw = values.items
+    if (typeof raw === "string") {
+      try {
+        parsedItems = JSON.parse(raw)
+      } catch {
+        // Fallback for comma-separated or single string values
+        parsedItems = raw.split(",").map((s) => s.trim())
+      }
+    } else if (Array.isArray(raw)) {
+      parsedItems = raw
+    }
+
+    if (!Array.isArray(parsedItems)) {
+      parsedItems = [parsedItems]
+    }
+
+    const max = Math.min(Number(values.maxIterations || 50), 100)
+    const sliced = parsedItems.slice(0, max)
+
+    return {
+      items: sliced,
+      total: sliced.length,
+      item: sliced[0] || null,
+      index: 0,
+    }
+  },
 } satisfies Record<ActionNodeType, NodeExecutor>

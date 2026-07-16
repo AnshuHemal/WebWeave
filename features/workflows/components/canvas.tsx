@@ -19,7 +19,9 @@ import { Search, Plus } from "lucide-react"
 import { StepNode } from "@/features/workflows/components/step-node"
 import { StickyNoteNode } from "@/features/workflows/components/sticky-note-node"
 import { NodeCommandPalette } from "@/features/workflows/components/node-command-palette"
+import { useCopyPaste } from "@/features/workflows/hooks/use-copy-paste"
 import type { StepNodeType } from "@/features/workflows/nodes/node-registry"
+import type { WorkflowGraph } from "@/lib/db/schema"
 import { Button } from "@/components/ui/button"
 
 import "@xyflow/react/dist/style.css"
@@ -51,13 +53,58 @@ function useMounted() {
   )
 }
 
-export function Canvas() {
+function CanvasInner({
+  paletteOpen,
+  setPaletteOpen,
+}: {
+  paletteOpen: boolean
+  setPaletteOpen: (open: boolean) => void
+}) {
+  // Wire multi-node copy and paste keyboard shortcut hook inside ReactFlow context
+  useCopyPaste()
+
+  return (
+    <>
+      <Controls />
+      <Cursors />
+      <Panel position="top-left" className="m-3">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setPaletteOpen(true)}
+          className="h-8 gap-2 bg-card/90 backdrop-blur border-border text-xs text-muted-foreground hover:text-foreground shadow-sm"
+        >
+          <Search className="size-3.5 text-blue-400" />
+          <span>Search nodes...</span>
+          <kbd className="pointer-events-none hidden sm:inline-flex h-4 select-none items-center gap-0.5 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+            <span className="text-xs">⌘</span>K
+          </kbd>
+        </Button>
+      </Panel>
+      <Panel position="top-right">
+        <AvatarStack />
+      </Panel>
+      <NodeCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+    </>
+  )
+}
+
+export function Canvas({ initialGraph }: { initialGraph?: WorkflowGraph }) {
   const { resolvedTheme } = useTheme()
   const mounted = useMounted()
   const [paletteOpen, setPaletteOpen] = useState(false)
   const colorMode: ColorMode = mounted
     ? (resolvedTheme as ColorMode) ?? "light"
     : "light"
+
+  const defaultNodes: StepNodeType[] =
+    initialGraph?.nodes && initialGraph.nodes.length > 0
+      ? initialGraph.nodes
+      : initialNodes
+
+  const defaultEdges: Edge[] = initialGraph?.edges || initialEdges
+
   const {
     nodes,
     edges,
@@ -67,8 +114,8 @@ export function Canvas() {
     onDelete,
   } = useLiveblocksFlow({
     suspense: true,
-    nodes: { initial: initialNodes },
-    edges: { initial: initialEdges },
+    nodes: { initial: defaultNodes },
+    edges: { initial: defaultEdges },
   })
 
   return (
@@ -98,27 +145,7 @@ export function Canvas() {
         }
         maxZoom={1}
       >
-        <Controls />
-        <Cursors />
-        <Panel position="top-left" className="m-3">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setPaletteOpen(true)}
-            className="h-8 gap-2 bg-card/90 backdrop-blur border-border text-xs text-muted-foreground hover:text-foreground shadow-sm"
-          >
-            <Search className="size-3.5 text-blue-400" />
-            <span>Search nodes...</span>
-            <kbd className="pointer-events-none hidden sm:inline-flex h-4 select-none items-center gap-0.5 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
-              <span className="text-xs">⌘</span>K
-            </kbd>
-          </Button>
-        </Panel>
-        <Panel position="top-right">
-          <AvatarStack />
-        </Panel>
-        <NodeCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+        <CanvasInner paletteOpen={paletteOpen} setPaletteOpen={setPaletteOpen} />
       </ReactFlow>
     </div>
   )
