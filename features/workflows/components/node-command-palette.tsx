@@ -88,8 +88,8 @@ export function NodeCommandPalette({
 
     const { x, y, zoom } = getViewport()
     const position = {
-      x: (width / 2 - x) / zoom,
-      y: (height / 2 - y) / zoom,
+      x: ((width || 800) / 2 - x) / zoom,
+      y: ((height || 600) / 2 - y) / zoom,
     }
 
     addNodes({

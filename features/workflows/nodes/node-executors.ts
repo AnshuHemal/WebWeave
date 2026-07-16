@@ -74,12 +74,11 @@ export const nodeExecutors: Partial<Record<NodeType, NodeExecutor>> = {
       timeoutMs: values.timeoutMs,
     }),
   code: async ({ values, getStagehand: _getStagehand, ...rest }) => {
-    // Pass the previous node's raw output as $input so user code can reference it.
-    // We retrieve it from the NodeContext's values injected by the runner.
     return codeNode({
       code: values.code,
       timeout: values.timeout,
-      input: undefined, // The runner will inject this via interpolated values
+      input: undefined,
     })
   },
+  sticky: async () => ({}),
 } satisfies Record<ActionNodeType, NodeExecutor>

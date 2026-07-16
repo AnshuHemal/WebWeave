@@ -17,6 +17,7 @@ import { AvatarStack } from "@liveblocks/react-ui";
 import { useState } from "react"
 import { Search, Plus } from "lucide-react"
 import { StepNode } from "@/features/workflows/components/step-node"
+import { StickyNoteNode } from "@/features/workflows/components/sticky-note-node"
 import { NodeCommandPalette } from "@/features/workflows/components/node-command-palette"
 import type { StepNodeType } from "@/features/workflows/nodes/node-registry"
 import { Button } from "@/components/ui/button"
@@ -25,7 +26,7 @@ import "@xyflow/react/dist/style.css"
 import "@liveblocks/react-ui/styles.css";
 import "@liveblocks/react-flow/styles.css";
 
-const nodeTypes: NodeTypes = { step: StepNode }
+const nodeTypes: NodeTypes = { step: StepNode, sticky: StickyNoteNode }
 
 const initialNodes: StepNodeType[] = [
   {
@@ -117,9 +118,8 @@ export function Canvas() {
         <Panel position="top-right">
           <AvatarStack />
         </Panel>
+        <NodeCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
       </ReactFlow>
-
-      <NodeCommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
     </div>
   )
 }

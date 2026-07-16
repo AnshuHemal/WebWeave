@@ -12,6 +12,7 @@ import {
   MousePointerClick,
   Pointer,
   ScanText,
+  StickyNote,
   Table,
   Webhook,
   type LucideIcon,
@@ -443,6 +444,22 @@ export const nodeRegistry = {
       { path: "result", label: "Return Value" },
       { path: "logs", label: "Console Logs" },
     ],
+  },
+  sticky: {
+    type: "sticky",
+    kind: "action",
+    label: "Sticky Note",
+    icon: StickyNote,
+    accent: "bg-amber-500 text-white",
+    fields: [
+      {
+        key: "text",
+        label: "Note Content",
+        placeholder: "Documentation notes...",
+        multiline: true,
+      },
+    ],
+    outputs: [],
   },
 } satisfies Record<string, NodeDefinition>
 
